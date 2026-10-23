@@ -4,6 +4,15 @@ Atividade do Módulo 19 de Continuação Back-End Python da EBAC.
 
 Criei um Dockerfile para executar a API Bookstore em um contêiner. A aplicação mantém o cadastro de categorias, produtos e pedidos, a paginação de 5 registros e a autenticação por token somente nos pedidos.
 
+
+## Continuidade do projeto e do ambiente
+
+Dei continuidade à entrega do [módulo 17 — Autenticação](https://github.com/mtgbcma-dotcom/m17-token/pull/1). Mantive os modelos, os serializers, a migração inicial e os testes de serializers do Bookstore, além das funcionalidades acrescentadas nas etapas anteriores.
+
+Nos módulos 15 e 16, utilizei Poetry com `pyproject.toml` e `poetry.lock`. A partir do módulo 17, passei a declarar as dependências em `requirements.txt` e a instalar com pip. Nas etapas com Docker, o próprio Dockerfile executa essa instalação durante a construção da imagem. Documentei essa mudança de ferramenta para deixar explícita a continuidade do mesmo projeto.
+
+Para reproduzir esta entrega, utilizei os comandos e os arquivos de dependências desta versão, descritos abaixo. A instalação com pip segue as faixas registradas em `requirements.txt`; o lock do Poetry das etapas anteriores continua disponível nos respectivos repositórios.
+
 ## Implementação
 
 - Imagem base `python:3.13-slim`.
