@@ -7,16 +7,27 @@ Criei um Dockerfile para executar a API Bookstore em um contêiner. A aplicaçã
 
 ## Continuidade do projeto e do ambiente
 
-Dei continuidade à entrega do [módulo 17 — Autenticação](https://github.com/mtgbcma-dotcom/m17-token/pull/1). Mantive os modelos, os serializers, a migração inicial e os testes de serializers do Bookstore, além das funcionalidades acrescentadas nas etapas anteriores.
+Dei continuidade ao [módulo 17 — Autenticação](https://github.com/mtgbcma-dotcom/m17-token/pull/1). Mantive os modelos, serializers, migração inicial, paginação, autenticação e testes da API Bookstore.
 
-Nos módulos 15 e 16, utilizei Poetry com `pyproject.toml` e `poetry.lock`. A partir do módulo 17, passei a declarar as dependências em `requirements.txt` e a instalar com pip. Nas etapas com Docker, o próprio Dockerfile executa essa instalação durante a construção da imagem. Documentei essa mudança de ferramenta para deixar explícita a continuidade do mesmo projeto.
+Mantive **Poetry** como gerenciador do projeto, com `pyproject.toml` e `poetry.lock` versionados. Preservei a identificação `m57-bookstore` e as dependências da base corrigida do módulo 17. Recuperei o manifesto e o lock integralmente do módulo 17, sem alterar suas dependências.
 
-Para reproduzir esta entrega, utilizei os comandos e os arquivos de dependências desta versão, descritos abaixo. A instalação com pip segue as faixas registradas em `requirements.txt`; o lock do Poetry das etapas anteriores continua disponível nos respectivos repositórios.
+Configurei o Dockerfile para instalar Poetry 2.5.1, conferir o lock e instalar as dependências com `poetry install --only main --no-root`. O pip instala apenas a ferramenta Poetry na imagem; as dependências da aplicação são instaladas pelo Poetry a partir do lock.
+
+Os arquivos `requirements*.txt` são exportações de compatibilidade do mesmo lock, utilizadas quando uma plataforma exige esse formato. A fonte de dependências desta entrega é o manifesto e o lock do Poetry. Registrei a continuidade e a validação em [docs/CONTINUIDADE.md](docs/CONTINUIDADE.md).
+
+Para conferir o manifesto no computador com Poetry 2.5.1 instalado:
+
+```powershell
+poetry check --lock
+poetry install --no-root --no-interaction
+```
+
+No contêiner, utilizei `poetry run python manage.py test` no mesmo ambiente instalado pelo Poetry.
 
 ## Implementação
 
 - Imagem base `python:3.13-slim`.
-- Instalação das dependências com `requirements.txt` antes da cópia do código, aproveitando o cache de build.
+- Instalação das dependências pelo Poetry e pelo lock antes da cópia do código, aproveitando o cache de build.
 - Variáveis `PYTHONDONTWRITEBYTECODE` e `PYTHONUNBUFFERED` configuradas.
 - `.dockerignore` para excluir Git, ambiente virtual, caches, banco local e arquivos de ambiente da imagem.
 - Execução por um usuário sem privilégios de administrador dentro do contêiner.
@@ -56,7 +67,7 @@ Se a porta 8000 estiver ocupada por outro projeto, pare esse servidor ou use `-p
 ### 3. Criar o administrador no banco do contêiner
 
 ```powershell
-docker exec -it m19-api python manage.py createsuperuser
+docker exec -it m19-api poetry run python manage.py createsuperuser
 ```
 
 Escolha seu usuário, e-mail e senha. A senha não aparece enquanto é digitada. Os usuários criados em outros projetos não são copiados para este banco.
@@ -64,7 +75,7 @@ Escolha seu usuário, e-mail e senha. A senha não aparece enquanto é digitada.
 ### 4. Criar dados para conferir a paginação
 
 ```powershell
-docker exec m19-api python manage.py seed_demo
+docker exec m19-api poetry run python manage.py seed_demo
 ```
 
 O comando cria 12 categorias e 12 produtos. Pode ser executado novamente sem duplicar os mesmos dados. Não cria usuários nem pedidos.
@@ -104,9 +115,9 @@ Resultado esperado: HTTP 200 e a resposta paginada. Sem pedidos cadastrados, `co
 ## Verificações dentro do contêiner
 
 ```powershell
-docker exec m19-api python manage.py check
-docker exec m19-api python manage.py makemigrations --check --dry-run
-docker exec m19-api python manage.py test --verbosity 2
+docker exec m19-api poetry run python manage.py check
+docker exec m19-api poetry run python manage.py makemigrations --check --dry-run
+docker exec m19-api poetry run python manage.py test --verbosity 2
 ```
 
 A suíte contém 86 testes de serializers, operações da API, permissões, paginação e autenticação por token. O Django usa um banco temporário para os testes e preserva os dados cadastrados para a demonstração.
