@@ -15,3 +15,11 @@ Validei a instalação com `poetry check --lock` e a construção da imagem. Exe
 Construí a imagem Python 3.13 com Poetry 2.5.1 e confirmei que `poetry check --lock` não apresenta inconsistências. As verificações do Django e de migrações terminaram sem problemas. Executei os 86 testes com SQLite na imagem instalada pelo Poetry: todos passaram. Criei 12 produtos de exemplo em um volume de teste, recriei os contêineres e confirmei que os 12 registros foram preservados. 
 
 Mantive os arquivos Python da aplicação e da suíte de testes sem alterações nesta correção.
+
+## Consulta pública de produtos — 29/10/2026
+
+Apliquei a [correção do módulo 17](https://github.com/mtgbcma-dotcom/m17-token/commit/fa76987cbcc8ef4231c6119b59959024c803fce9) conforme a orientação do tutor. Liberei a listagem e os detalhes de produtos sem login, preservando a paginação de 5 registros e a categoria na representação. Mantive a escrita de produtos restrita à equipe e os pedidos autenticados por token.
+
+Acrescentei três testes para a leitura anônima, a paginação pública e o bloqueio das operações de escrita para visitantes e usuários comuns. Atualizei as expectativas dos cenários anteriores que bloqueavam a consulta de produtos. Mantive os modelos, serializers, migrações, dependências, pyproject.toml e poetry.lock sem alterações nesta correção.
+
+Validei o manifesto e o lock com Poetry 2.5.1, construí a imagem Python 3.13 e executei as verificações de Django e migrações sem problemas. Executei os 89 testes com SQLite: todos passaram no Docker Linux. Conferi também requisições HTTP reais sem credenciais: listagem, segunda página e detalhe de produto retornaram HTTP 200; pedidos sem token retornaram HTTP 401; escrita de produtos e acesso a categorias sem login retornaram HTTP 403. Recriei os contêineres de teste e confirmei que os 12 produtos persistiram e que o mesmo contrato de acesso foi preservado.

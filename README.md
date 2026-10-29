@@ -5,6 +5,14 @@ Atividade do Módulo 19 de Continuação Back-End Python da EBAC.
 Criei um Dockerfile para executar a API Bookstore em um contêiner. A aplicação mantém o cadastro de categorias, produtos e pedidos, a paginação de 5 registros e a autenticação por token somente nos pedidos.
 
 
+## Consulta pública de produtos
+
+Apliquei a orientação do tutor e a correção do módulo 17: a listagem `GET /api/products/` e o detalhe `GET /api/products/{id}/` são públicos, sem necessidade de login ou token. Preservei a paginação de 5 registros, os links para as páginas seguintes e a categoria na representação dos produtos.
+
+Mantive o cadastro, a alteração e a exclusão de produtos restritos à equipe por sessão ou Basic Authentication. Os pedidos continuam protegidos por TokenAuthentication e retornam HTTP 401 sem token. Mantive também a permissão de categorias e o Poetry, com o manifesto e o lock sem alterações nesta correção.
+
+Acrescentei testes de consulta anônima da listagem e dos detalhes, paginação sem login e bloqueio de todas as operações de escrita de produtos para visitantes e usuários comuns. Registrei a validação em [docs/CONTINUIDADE.md](docs/CONTINUIDADE.md).
+
 ## Continuidade do projeto e do ambiente
 
 Dei continuidade ao [módulo 17 — Autenticação](https://github.com/mtgbcma-dotcom/m17-token/pull/1). Mantive os modelos, serializers, migração inicial, paginação, autenticação e testes da API Bookstore.
@@ -88,7 +96,7 @@ O comando cria 12 categorias e 12 produtos. Pode ser executado novamente sem dup
 - Produtos: http://127.0.0.1:8000/api/products/
 - Pedidos: http://127.0.0.1:8000/api/orders/
 
-Para categorias e produtos, use **Log in** com o administrador criado no contêiner. A listagem possui `count`, `next`, `previous` e `results`.
+Consulte a listagem e os detalhes de produtos sem fazer login. Para acessar categorias ou cadastrar, alterar e excluir produtos, use **Log in** com o administrador criado. A listagem de produtos preserva `count`, `next`, `previous` e `results`.
 
 Pedidos exigem token: abrir `/api/orders/` diretamente no navegador sem esse cabeçalho retorna HTTP 401, mesmo com uma sessão de login.
 
@@ -120,7 +128,7 @@ docker exec m19-api poetry run python manage.py makemigrations --check --dry-run
 docker exec m19-api poetry run python manage.py test --verbosity 2
 ```
 
-A suíte contém 86 testes de serializers, operações da API, permissões, paginação e autenticação por token. O Django usa um banco temporário para os testes e preserva os dados cadastrados para a demonstração.
+A suíte contém 89 testes de serializers, operações da API, permissões, paginação e autenticação por token. O Django usa um banco temporário para os testes e preserva os dados cadastrados para a demonstração.
 
 ## Parar e iniciar novamente
 
